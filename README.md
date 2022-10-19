@@ -21,7 +21,8 @@ Upload the customized DEPNotify package to jamf.
 Create a policy that deploys the following items: 
 	1. The custom dep-notify package installs the DEPNotify app and some logos used during the installation.
 	2. The script that you uploaded in the previous step. 
-	3. Make this policy available in self-service.
+	3. Fill out the Jamf Script parameters with required information. 
+	4. Make this policy available in self-service.
  
 Create a policy that deploys the macOS Ventura package that you previously uploaded. 
 Make sure to set this package action as a cache. This is important because our script will install this cached package on the user endpoint.
