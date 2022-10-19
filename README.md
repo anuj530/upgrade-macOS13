@@ -29,7 +29,5 @@ Make sure to set this package action as a cache. This is important because our s
  
  
 Work in progress: 
- 
-	· Way to report successful installation in jamf policy log. Please have an inventory update at the startup policy to ensure the endpoint is updated successfully. 
- 
+-  Way to report successful installation in jamf policy log. Please have an inventory update at the startup policy to ensure the endpoint is updated successfully. 
 
