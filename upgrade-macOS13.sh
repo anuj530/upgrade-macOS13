@@ -1,8 +1,9 @@
 #!/bin/bash
 
+
 #!/bin/zsh
 # shellcheck shell=bash
-
+#AUTHOR-Anuj Chokshi
 # Script Info variables
 script_name="upgrade-macOS"
 SCRIPTVER="1"
@@ -20,14 +21,14 @@ SCRIPTVER="1"
 
 # Parameters -- MODIFY THIS BASED ON YOUR ENVIORNMENT 
 # Parameter 4: Friendly Application Name
-APPNAME="macOS Ventura"
+APPNAME="$4"
 # Parameter 5: Jamf Trigger for caching package
-JAMF_TRIGGER="cache-macOS13"
+JAMF_TRIGGER="$5"
 # Parameter 6: Package Name (with .pkg)
-PKG_NAME="macOS13 - Ventura (B11).pkg"
+PKG_NAME="$6"
 # Parameter 7: Package size in KB (whole numebrs only)
 # use this to get the correct package size --  ls -l $PACKAGENAME | awk '{ print $5 }' | awk '{$1/=1024;printf "%.i\n",$1}'
-PKG_Size="11838382"
+PKG_Size="$7"
 
 
 
@@ -71,7 +72,7 @@ CURRENT_USER=$(/usr/sbin/scutil <<< "show State:/Users/ConsoleUser" | /usr/bin/a
 	DL_ERROR="There was a problem starting the download, this process will now quit. Please try again or open a ticket with $IT_SUPPORT."
 	INSTALL_ERROR="The installation failed. Please open a ticket with $IT_SUPPORT."
 	
-
+	
 	# Grab currently logged in user to set the language for Dialogue messages
 	current_user=$(/usr/sbin/scutil <<< "show State:/Users/ConsoleUser" | /usr/bin/awk -F': ' '/[[:space:]]+Name[[:space:]]:/ { if ( $2 != "loginwindow" ) { print $2 }}')
 		current_uid=$(/usr/bin/id -u "$current_user")
@@ -103,7 +104,7 @@ CURRENT_USER=$(/usr/sbin/scutil <<< "show State:/Users/ConsoleUser" | /usr/bin/a
 		
 		# Dialogue localizations - reinstall lockscreen
 		dialog_reinstall_title_en="Upgrading macOS"
-				
+		
 		dialog_reinstall_heading_en="Please wait as we prepare your computer for upgrading macOS."
 		dialog_reinstall_desc_en="This process may take up to 30 minutes. Once completed your computer will reboot and begin the upgrade."
 		dialog_reinstall_status_en="Preparing macOS for installation"
@@ -121,7 +122,7 @@ CURRENT_USER=$(/usr/sbin/scutil <<< "show State:/Users/ConsoleUser" | /usr/bin/a
 		
 		# Dialogue buttons
 		dialog_confirmation_button_en="Confirm"
-				
+		
 		dialog_cancel_button_en="Stop"
 		dialog_enter_button_en="Enter"
 		
@@ -131,12 +132,12 @@ CURRENT_USER=$(/usr/sbin/scutil <<< "show State:/Users/ConsoleUser" | /usr/bin/a
 		
 		# Dialogue localizations - power check
 		dialog_power_title_en="Waiting for AC Power Connection"
-				
+		
 		dialog_power_desc_en="Please connect your computer to power using an AC power adapter. This process will continue if AC power is detected within the next:"
 		
 		dialog_nopower_desc_en="Exiting. AC power was not connected after waiting for:"
 		
-				# Dialogue localizations - ask for short name
+		# Dialogue localizations - ask for short name
 		dialog_short_name_en="Please enter your username to start the reinstallation process"
 		
 		# Dialogue localizations - not a volume owner
@@ -234,8 +235,8 @@ END
 		echo
 		echo "   [$script_name] v$version script execution started: $(date)"
 		
-	########################Optional Check for backblaze backup stat###################
-	######Feel free to remove this if you are not using backblaze in your org.#####################
+		########################Optional Check for backblaze backup stat###################
+		######Feel free to remove this if you are not using backblaze in your org.#####################
 		check_backupstat(){
 			
 			# credit to acidprime on jamfnation and Brad Pettit at Bexley Schools
@@ -257,23 +258,23 @@ END
 					dayssincelastbackup=0
 					echo "[check_backupstat] Backup status OK"
 				fi
-			
+				
 				if [ $dayssincelastbackup != "0" ]; then
-				echo "[check_backupstat] Backblaze backup might be more than zero days old. Warned user to check."
-				"$jamfHelper" -windowType "hud" -title "Check Backup!" -heading "Backup Error!" -alignHeading "natural" -description "Your Backblaze backup might be out of date. Please open the Backblaze app and select 'Backup Now'. Once the backup is complete, please try again! " -alignDescription "natural" -icon -button1 "Okay" -icon "/tmp/depimages/bb.png"
-				exit 1
+					echo "[check_backupstat] Backblaze backup might be more than zero days old. Warned user to check."
+					"$jamfHelper" -windowType "hud" -title "Check Backup!" -heading "Backup Error!" -alignHeading "natural" -description "Your Backblaze backup might be out of date. Please open the Backblaze app and select 'Backup Now'. Once the backup is complete, please try again! " -alignDescription "natural" -icon -button1 "Okay" -icon "/tmp/depimages/bb.png"
+					exit 1
 				fi
 				
 			else 
 				"$jamfHelper" -windowType "hud" -title "Warning!" -heading "Backblaze Not Installed!" -alignHeading "natural" -description "It looks like Backblaze is not installed on this computer. Would you still like to proceed? " -alignDescription "natural" -icon -button1 "No" -button2 "Yes" -icon "/tmp/depimages/bb.png"
-                    if [ $? -eq 0 ];then
+				if [ $? -eq 0 ];then
 					echo "[check_backupstat] Backblaze is not installed. User decided to cancel."
 					exit 1
 				fi
 			fi
 		}
-
-
+		
+		
 		ask_for_password() {
 			# required for Silicon Macs
 			if [[ $max_password_attempts == "infinite" ]]; then
@@ -1211,17 +1212,17 @@ END
 		post_prep_work() {
 			# set DEPNotify status for rebootdelay if set
 			if [[ "$rebootdelay" -gt 10 ]]; then
-					dep_notify_quit
-					echo "   [post_prep_work] Opening DEPNotify full screen message (language=$user_language)"
-					dn_title="${!dialog_reinstall_title}"
-					dn_desc="${!dialog_rebooting_heading}"
-					dn_status="${!dialog_rebooting_status}"
-					dn_button=""
-					dep_notify
-					dep_notify_progress reboot-delay >/dev/null 2>&1 &
-					echo $! >> /tmp/depnotify_progress_pid
+				dep_notify_quit
+				echo "   [post_prep_work] Opening DEPNotify full screen message (language=$user_language)"
+				dn_title="${!dialog_reinstall_title}"
+				dn_desc="${!dialog_rebooting_heading}"
+				dn_status="${!dialog_rebooting_status}"
+				dn_button=""
+				dep_notify
+				dep_notify_progress reboot-delay >/dev/null 2>&1 &
+				echo $! >> /tmp/depnotify_progress_pid
 			fi
-						
+			
 			# finish the delay
 			sleep "$rebootdelay"
 			
@@ -1230,7 +1231,7 @@ END
 			finish
 			exit
 		}
-
+		
 		
 		
 		
@@ -1279,5 +1280,5 @@ END
 		else
 			"$working_macos_app"/Contents/Resources/startosinstall  --pidtosignal $$ --agreetolicense --nointeraction --rebootdelay "$rebootdelay"  & wait $!
 		fi
-sleep 10
-post_prep_work
+		sleep 10
+		post_prep_work
