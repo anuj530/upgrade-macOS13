@@ -1,4 +1,4 @@
-# upgrade-macOS13
+# Upgrading to macOS 13 using Jamf Self Service
 The purpose of this script is to upgrade to macOS Ventura using the full app installer via Jamf Self-Service. 
  
 This script uses some parts of the erase-install script created by Graham Pugh and the script created by John Mahlman, 'use DEPNotify for installer progress.' 
